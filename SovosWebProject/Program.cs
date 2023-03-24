@@ -1,15 +1,12 @@
 using Microsoft.EntityFrameworkCore;
-using SovosWebProject.Data;
+using SovosWebProject.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<ApplicationDBContext>(options => options.UseSqlServer(
-    builder.Configuration.GetConnectionString("DefaultConnection")
-    )
-);
-builder.Services.AddRazorPages();
+
+builder.Services.AddScoped<IApiService, ApiService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -1,24 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
-using SovosWebProject.Data;
 using SovosWebProject.Models;
+using SovosWebProject.Services;
 using System.ComponentModel;
 
 namespace SovosWebProject.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly ApplicationDBContext _dbContext;
+        private readonly IApiService _apiService;
 
-        public CategoryController(ApplicationDBContext dbContext)
+        public CategoryController(IApiService apiService)
         {
-            _dbContext = dbContext;
+            _apiService = apiService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            IEnumerable<Category> objCategoryList = _dbContext.Categories;
+            IEnumerable<Category> objCategoryList = await _apiService.ListAll();
             return View(objCategoryList);
         }
 
@@ -29,18 +29,17 @@ namespace SovosWebProject.Controllers
         }
 
         //GET
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
             if (id == null || id == 0) return NotFound();
-            var category = _dbContext.Categories.Find(id);
-            if (category == null) return NotFound();
-
-            return View(category);
+            Category remoteCategory = await _apiService.GetById(id);
+            if (remoteCategory == null) return NotFound();
+            return View(remoteCategory);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Category category)
+        public async Task<IActionResult> Edit(Category category)
         {
             if (category.Name == category.DisplayOrder.ToString())
             {
@@ -48,44 +47,57 @@ namespace SovosWebProject.Controllers
             }
             if (ModelState.IsValid)
             {
-                _dbContext.Categories.Update(category);
-                _dbContext.SaveChanges();
-                TempData["Success"] = "Category edited succesfully";
-                return RedirectToAction("Index");
+                //_dbContext.Categories.Update(category);
+                bool response = await _apiService.Update(category);
+                //_dbContext.SaveChanges();
+                if (response)
+                {
+                    TempData["Success"] = "Category edited succesfully";
+                    return RedirectToAction("Index");
+                }
+            } else
+            {
+                ModelState.AddModelError("Name", "Invalid Model");
             }
-            return View(category);
+            return RedirectToAction("Index");
         }
 
         //GET
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null || id == 0) return NotFound();
-            var category = _dbContext.Categories.Find(id);
-            if (category == null) return NotFound();
-
-            return View(category);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeletePOST(int? id)
-        {
-            if (id == 0 || id == null)
+            if (id == 0)
             {
                 return NotFound();
             }
-            var category = _dbContext.Categories.Find(id);
-            if (category == null) return NotFound();
-            _dbContext.Remove(category);
-            _dbContext.SaveChanges();
-            TempData["Success"] = "Category deleted succesfully";
+            bool saved = await _apiService.Delete(id);
+            if (saved)
+            {
+                TempData["Success"] = "Category deleted succesfully";
+            }
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeletePOST(int id)
+        {
+            if (id == 0)
+            {
+                return NotFound();
+            }
+            bool saved = await _apiService.Delete(id);
+            if (saved)
+            {
+
+                TempData["Success"] = "Category deleted succesfully";
+            }
             return RedirectToAction("Index");
         }
 
         //POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Category category)
+        public async Task<IActionResult> Create(Category category)
         {
             if (category.Name == category.DisplayOrder.ToString())
             {
@@ -93,10 +105,13 @@ namespace SovosWebProject.Controllers
             }
             if (ModelState.IsValid)
             {
-                _dbContext.Categories.Add(category);
-                _dbContext.SaveChanges();
-                TempData["Success"] = "Category created succesfully";
-                return RedirectToAction("Index");
+                bool saved = await _apiService.Create(category);
+                if (saved)
+                {
+                    TempData["Success"] = "Category created succesfully";
+                    return RedirectToAction("Index");
+
+                }
             }
             return View(category);
         }
