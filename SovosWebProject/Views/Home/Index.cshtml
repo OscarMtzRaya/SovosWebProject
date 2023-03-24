@@ -1,8 +1,30 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<link rel="stylesheet" href="/css/styles.css">
+<!-- Background Video-->
+<video class="bg-video" playsinline="playsinline" autoplay="autoplay" muted="muted" loop="loop"><source src="assets/mp4/bg.mp4" type="video/mp4" /></video>
+<!-- Masthead-->
+<div class="masthead">
+    <div class="masthead-content text-white">
+        <div class="container-fluid px-4 px-lg-0">
+            <h1 class="fst-italic lh-1 mb-4">Thank you for visiting</h1>
+            <p class="mb-5">This application represents a proof of concept of developing a web application with .NET Core 6, using Entity Framework and a SQL Database.
+                <br /><br />This application and database has been deployed to the Azure Cloud Service.
+                <br /><br />Click on categories to enter CRUD
+            </p>
+            <div class="row">
+                <div class="col-12">
+                    <a class="btn btn-primary w-100 py-3" asp-controller="Category" asp-action="Index">Categories</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Social Icons-->
+<div class="social-icons">
+    <div class="d-flex flex-row flex-lg-column justify-content-center align-items-center h-100 mt-3 mt-lg-0">
+        <a class="btn btn-dark m-3" href="https://github.com/OscarMtzRaya" target="_blank"><i class="fab fa-github"></i></a>
+        <a class="btn btn-dark m-3" href="https://www.linkedin.com/in/oscar-antonio-martinez-raya-b06714218/" target="_blank"><i class="fab fa-linkedin"></i></a>
+    </div>
 </div>

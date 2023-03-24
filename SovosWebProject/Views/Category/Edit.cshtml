@@ -3,6 +3,7 @@
     ViewData["Title"] = "Edit Category";
 }
 
+<div class="container">
 <form method="post">
     <div class="border p-4 mt-4">
         <div class="row pb-2">
@@ -20,13 +21,13 @@
             <input asp-for="DisplayOrder" class="form-control" type="text" />
             <span asp-validation-for="DisplayOrder" class="text-danger"></span>
         </div>
-        <div class="mb-3 text-end">
-            <button type="submit" class="btn btn-primary py-2" style="width:15%">Update</button>
-            <button type="submit" class="btn btn-secondary py-2" style="width:15%" asp-controller="Category" asp-action="Index">Return to lst</button>
+        <div class="row mb-3 text-end">
+                <div class="col-6 col-md-3"><button type="submit" class="btn btn-primary py-2 w-100">Update</button></div>
+                <div class="col-6 col-md-3"><a class="btn btn-secondary py-2 w-100" asp-controller="Category" asp-action="Index">Return to list</a></div
         </div>
     </div>
 </form>
-
+</div>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
